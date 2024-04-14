@@ -1,0 +1,39 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+    <div class="section-title">
+        <span class="sub-title">Contact Us</span>
+        <h2 class="h22">Get in Touch</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <form action="/" method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Your Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Your Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Your Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Bennett University, Greater Noida</p>
+                <p><i class="fas fa-envelope"></i> e22bcau0002@bennett.edu.in</p>
+                <p><i class="fas fa-phone"></i> +91 94060 35957</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("partials/footer.ejs") %>

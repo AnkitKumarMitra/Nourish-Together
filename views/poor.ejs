@@ -1,0 +1,42 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Food Available</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Food Details</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% foodDonations.forEach(donation => { %>
+                <tr>
+                    <td><%= donation.name %></td>
+                    <td><%= donation.address %></td>
+                    <td>
+                        <% donation.food_details.forEach(food => { %>
+                            <%= food.name %><br>
+                        <% }); %>
+                    </td>
+                    <td><%= donation.contact %></td>
+                    <td>
+                        <form action="/accept" method="POST">
+                            <!-- Hidden input fields to send donation data -->
+                            <input type="hidden" name="donationId" value="<%= donation.donation_id %>">
+                            <!-- End of hidden input fields -->
+
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<%- include("partials/footer.ejs") %>
