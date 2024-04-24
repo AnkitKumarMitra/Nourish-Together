@@ -9,7 +9,7 @@ Nourish Together is a web application designed to connect donors, volunteers, an
 1. **Clone the Repository**: Start by cloning the Nourish Together repository to your local machine.
 
     ```bash
-    git clone https://github.com/your-username/Nourish-Together.git
+    git clone https://github.com/AnkitKumarMitra/Nourish-Together.git
     ```
 
 2. **Navigate to the Project Directory**: Change your current directory to the Nourish Together project directory.
