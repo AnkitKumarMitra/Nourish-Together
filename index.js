@@ -18,8 +18,12 @@ app.use(bodyParser.json());
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: false
-}));
+    saveUninitialized: false,
+    expires: 24 * 60 * 60 * 1000,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+    }
+}))
 
 const db = new pg.Client({
     user: "postgres",
