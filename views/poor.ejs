@@ -15,6 +15,7 @@
         </thead>
         <tbody>
             <% foodDonations.forEach(donation => { %>
+                <% if (!donation.accepted) {%>
                 <tr>
                     <td><%= donation.name %></td>
                     <td><%= donation.address %></td>
@@ -26,15 +27,13 @@
                     <td><%= donation.contact %></td>
                     <td>
                         <form action="/accept" method="POST">
-                            <!-- Hidden input fields to send donation data -->
                             <input type="hidden" name="donationId" value="<%= donation.donation_id %>">
-                            <!-- End of hidden input fields -->
 
                             <button type="submit" class="btn btn-success">Accept</button>
                         </form>
                     </td>
                 </tr>
-            <% }); %>
+            <% }}); %>
         </tbody>
     </table>
 </div>

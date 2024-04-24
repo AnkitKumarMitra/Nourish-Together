@@ -2,9 +2,14 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 import session from "express-session";
+import bcrypt from "bcrypt";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
+
+app.use(cors());
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,7 +43,6 @@ let redirect = false;
 const isLoggedIn = async (req, res, next) => {
     if (!req.session || !req.session.user) {
         redirect = true;
-        console.log(redirect);
         return res.redirect('/login');
     }
     next();
@@ -55,9 +59,7 @@ app.get("/register", (req, res) => {
 
 app.get("/login", async (req, res) => {
     if (redirect) {
-        console.log(redirect);
         redirect = false;
-        console.log(redirect);
         res.render("login.ejs", { msg: "You need to login before doing this." });
     } else {
         res.render("login.ejs")
@@ -85,9 +87,6 @@ app.get("/volunteer", isLoggedIn, async (req, res) => {
 app.get("/poor", isLoggedIn, async (req, res) => {
     try {
         const { rows } = await db.query("SELECT * FROM food_donations");
-        rows.forEach(row => {
-            console.log(row.food_details);
-        });
 
         res.render("poor.ejs", { foodDonations: rows });
     } catch (error) {
@@ -153,17 +152,19 @@ app.post("/complete", async (req, res) => {
 app.post('/register', async (req, res) => {
     const { fullName, age, address, email, phone, password, mainChoice } = req.body;
     try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
         const query = `
             INSERT INTO users (full_name, age, address, email, phone, password, main_choice)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING full_name
         `;
-        const values = [fullName, age, address, email, phone, password, mainChoice];
+        const values = [fullName, age, address, email, phone, hashedPassword, mainChoice];
         const result = await db.query(query, values);
         const user = result.rows[0];
         req.session.user = user;
         console.log('User registered successfully:', user.full_name);
-        res.redirect('/', { user });
+        res.redirect('/');
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ message: 'Error registering user' });
@@ -176,18 +177,20 @@ app.post("/login", async (req, res) => {
     try {
         const query = `
             SELECT * FROM users
-            WHERE email = $1 AND password = $2;
+            WHERE email = $1;
         `;
-        const result = await db.query(query, [email, password]);
+        const result = await db.query(query, [email]);
 
         if (result.rows.length === 1) {
             const user = result.rows[0];
-            req.session.user = user;
-            console.log('User logged in successfully:', user.full_name);
-            res.redirect("/");
-        } else {
-            res.status(500).render("login.ejs", { msg: "Wrong Email or Password!" });
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                req.session.user = user;
+                console.log('User logged in successfully:', user.full_name);
+                return res.redirect("/");
+            }
         }
+        res.status(500).render("login.ejs", { msg: "Wrong Email or Password!" });
     } catch (error) {
         console.error('Error occurred while logging in:', error);
         res.status(500).json({ error: "An error occurred while logging in" });
@@ -216,7 +219,6 @@ app.post("/donate", async (req, res) => {
             const values = [userName, userAddress, JSON.stringify(foodItems), userContact];
             await db.query(query, values);
 
-            console.log('Donation inserted successfully');
             res.redirect("/");
         } catch (error) {
             console.error('Error inserting donation:', error);
@@ -260,11 +262,11 @@ app.post("/accept", async (req, res) => {
             const values = [pickupAddress, deliveryAddress, food_details.length];
             const jobResult = await db.query(insertQuery, values);
 
-            const deleteQuery = `
-            DELETE FROM food_donations
-            WHERE donation_id = $1
+            const changeStatus = `
+            UPDATED food_donation
+            WHERE donation_id = $1;
         `;
-            await db.query(deleteQuery, [donationId]);
+            await db.query(changeStatus, [donationId]);
 
             res.status(200).redirect("/");
         } catch (error) {
@@ -309,8 +311,6 @@ app.get("/accept/:jobId", async (req, res) => {
             console.error("Error accepting job:", error);
             res.status(500).json({ error: "Internal server error" });
         }
-
-        console.log("accepted");
 
     } else {
         res.status(401).render("index.ejs", { msg: "You are not authorized to accept food orders." });
