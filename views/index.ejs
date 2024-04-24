@@ -1,3 +1,14 @@
+<% if (locals.msg) { %>
+    <div id="alertBox" class="alert alert-danger text-center" role="alert">
+        <p><%= locals.msg %></p>
+    </div>
+    <script>
+        setTimeout(() => {
+            document.getElementById('alertBox').style.display = 'none';
+        }, 5000);
+    </script>
+<% } %>
+
 <%- include("partials/header.ejs") %>
     <div class="container">
         <h1>Our Cause</h1>

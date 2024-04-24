@@ -1,0 +1,24 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Delivery Status</h2>
+
+    <% if (Array.isArray(deliveryDetails)) { %>
+    <% deliveryDetails.forEach(status => { %>
+        <div class="card mb-3">
+            <div class="card-body p-4">
+                <h5 class="card-title">Job ID: <%= status.id %></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Status: <%= status.status ? 'Completed' : 'Pending' %></h6>
+                <p class="card-text">Pickup Address: <%= status.pickup_address %><br>Delivery Address: <%= status.delivery_address %></p>
+                <form action="/complete" method="POST">
+                    <input type="hidden" name="deliveryId" value="<%= status.id %>">
+                    <button class="btn btn-success float-right delivery-completed-btn" data-job-id="<%= status.id %>">Delivery Completed</button>
+                </form>
+            </div>
+        </div>
+    <% }); %>
+    <% } %>
+
+</div>
+
+<%- include("partials/footer.ejs") %>

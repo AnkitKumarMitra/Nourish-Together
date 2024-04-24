@@ -26,6 +26,12 @@
     list-style: none;
 }
 
+.navbar-nav .nav-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .nav-item a{
     color: black;
     text-decoration: none;
@@ -141,3 +147,4 @@
 .accordion-item.active + .faq-answer {
     display: block;
 }
+

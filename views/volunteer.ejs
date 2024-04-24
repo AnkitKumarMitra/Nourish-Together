@@ -1,3 +1,14 @@
+<% if (locals.msg) { %>
+    <div id="alertBox" class="alert alert-danger text-center" role="alert">
+        <p><%= locals.msg %></p>
+    </div>
+    <script>
+        setTimeout(() => {
+            document.getElementById('alertBox').style.display = 'none';
+        }, 5000);
+    </script>
+<% } %>
+
 <%- include("partials/header.ejs") %>
 
 <div class="container mt-5">
@@ -19,9 +30,6 @@
                     <div class="col-md-6">
                         <a href="/accept/<%= job.id %>" class="btn btn-success w-100">Accept</a>
                     </div>
-                    <div class="col-md-6">
-                        <button class="btn btn-danger w-100 reject-btn" data-job-id="<%= job.id %>">Reject</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -29,21 +37,3 @@
 </div>
 
 <%- include("partials/footer.ejs") %>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const rejectButtons = document.querySelectorAll('.reject-btn');
-
-        rejectButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const jobId = button.dataset.jobId;
-                
-                // Delete the job row from the DOM
-                const jobRow = document.getElementById(`job-${jobId}`);
-                if (jobRow) {
-                    jobRow.remove();
-                }
-            });
-        });
-    });
-</script>

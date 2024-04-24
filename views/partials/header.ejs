@@ -32,6 +32,12 @@
                     <a class="nav-link" href="/contact">Contact Us</a>
                 </li>
                 <% if (locals.user) { %>
+                    <% if (locals.user.main_choice == "volunteer") {%>
+                        <li class="nav-item">
+                            <a href="/delivery" class="nav-link">Deliveries</a>
+                        </li>
+                        
+                    <% } %>
                     <li class="nav-item">
                         <span class="nav-link"><%= user.full_name %></span>
                     </li>
